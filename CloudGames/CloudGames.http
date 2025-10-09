@@ -1,0 +1,6 @@
+@CloudGames_HostAddress = http://localhost:5262
+
+GET {{CloudGames_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

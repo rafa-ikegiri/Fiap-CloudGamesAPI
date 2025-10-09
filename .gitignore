@@ -1,0 +1,34 @@
+# Build outputs
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.nupkg
+
+# User-specific files
+*.user
+*.suo
+*.pdb
+
+# Visual Studio specific files
+.vs/
+.vscode/
+
+# Dependencies
+packages/
+node_modules/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Configuration files
+appsettings.json
+secrets.json
+
+# Ignorar arquivos da pasta Debug
+Debug/
+
+# Ignorar arquivos da pasta CopilotIndices
+CopilotIndices/
