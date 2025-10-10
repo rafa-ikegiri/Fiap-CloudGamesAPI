@@ -21,7 +21,6 @@ builder.Services.AddScoped<JogoService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IJogoRepository, JogoRepository>();
 
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -59,7 +58,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
 #region JWT
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -86,7 +84,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("ConnectionString"));
 }, ServiceLifetime.Scoped);
 
-
 // Adiciona política de CORS
 builder.Services.AddCors(options =>
 {
@@ -96,7 +93,6 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
-
 
 var app = builder.Build();
 
@@ -114,10 +110,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 // Usa a política de CORS
 app.UseCors("AllowAll");
-
 
 app.MapControllers();
 
