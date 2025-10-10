@@ -1,0 +1,34 @@
+
+version: '3.8'
+
+services:
+  cloudgamesapi:
+    image: ${DOCKER_REGISTRY-}cloudgamesapi
+    build:
+      context: .
+      dockerfile: CloudGames/Dockerfile
+    container_name: aspnetcore_api
+    ports:
+      - "5000:8080"  # HTTP
+      - "5001:8081"  # HTTPS
+    depends_on: 
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development      
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081      
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=!Admin123
+      - MSSQL_PID=Express
+    volumes:
+      - sql_data:/var/opt/mssql
+
+volumes:
+  sql_data:
