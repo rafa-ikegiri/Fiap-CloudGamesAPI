@@ -24,5 +24,3 @@ jobs:
 
     - name: Build
       run: dotnet build CloudGames/CloudGamesAPI.csproj --no-restore --configuration Release
-
-    - name: Run tests
