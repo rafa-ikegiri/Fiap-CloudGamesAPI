@@ -28,5 +28,4 @@ jobs:
         file: ./Dockerfile
         push: true
 
-        tags: rafaelikegiri/cloudgamesapi:latest
-
+        tags: rafaikegiri/cloudgamesapi:latest
