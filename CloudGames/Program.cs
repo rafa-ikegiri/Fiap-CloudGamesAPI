@@ -6,9 +6,31 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Sinks.Datadog.Logs;
 using System.Text;
 
+
+
+var logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.DatadogLogs(
+        apiKey: "c85556199e6dac3707587fa3751c5b8acb0ef452",
+        source: "cloudgames-api",
+        service: "cloudgames-api",
+        host: Environment.MachineName,
+        configuration: new DatadogConfiguration
+        {
+            Url = "https://http-intake.logs.datadoghq.com"
+        })
+    .CreateLogger();
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
@@ -42,6 +64,7 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Cabeçalho de Autorização JWT está usando o esquema Bearer \r\n\r\n Digite 'Bearer' antes de colocar o Token",
     });
 
+
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -57,6 +80,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
 
 #region JWT
 
@@ -84,6 +108,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("ConnectionString"));
 }, ServiceLifetime.Scoped);
 
+
 // Adiciona política de CORS
 builder.Services.AddCors(options =>
 {
@@ -94,15 +119,34 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-    //if (!app.Environment.IsDevelopment())
+
+app.MapGet("/erro", () =>
+{
+    try
     {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+        throw new Exception("Erro de teste para o Datadog");
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Ocorreu um erro de teste!");
+        return Results.Problem("Erro simulado registrado no Datadog.");
+    }
+});
+
+
+// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//    //if (!app.Environment.IsDevelopment())
+//    {
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -110,8 +154,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 // Usa a política de CORS
 app.UseCors("AllowAll");
+
 
 app.MapControllers();
 
